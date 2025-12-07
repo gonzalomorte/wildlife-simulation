@@ -72,7 +72,7 @@ def draw_boids(win, boids):
 
 def draw_scene(win, boids):
     """Draw everything: background, boids, sliders."""
-    win.fill((20, 20, 20))
+    win.fill((20, 20, 20))  # RGB fill for the background
 
     draw_boids(win, boids)
     draw_sliders(win)

@@ -26,6 +26,6 @@ class Boid:
     def edges(self, width, height):
         # world wrapping
         if self.position.x > width:  self.position.x = 0
-        if self.position.x < 0:     self.position.x = width
+        if self.position.x < 0:      self.position.x = width
         if self.position.y > height: self.position.y = 0
         if self.position.y < 0:      self.position.y = height
