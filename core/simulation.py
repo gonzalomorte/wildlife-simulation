@@ -4,15 +4,17 @@ from core.boid import Boid
 import random
 
 class Simulation:
-    def __init__(self, n_boids, width, height):
-        self.width = width
+    def __init__(self, n_boids, width, height):  # public Simulation(int nBoids, int width, int height)
+        self.width = width  # SELF -> THIS
         self.height = height
-        self.boids = [Boid(random.randint(0, width), random.randint(0, height)) 
-                      for _ in range(n_boids)]
 
-        self.w_sep = 1.5
-        self.w_ali = 1.0
-        self.w_coh = 0.5
+        self.boids = []  
+        for i in range(n_boids):  # for (int i = 0; i < nBoids; i++) 
+            self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))  # this.boids[i] = new Boid(random.nextInt(width), random.nextInt(height));
+
+        self.separation = 1.5
+        self.alignment = 1.0
+        self.cohesion = 0.5
 
     def neighbors(self, boid):
         ns = []
@@ -49,7 +51,7 @@ class Simulation:
                 coh = (coh / len(neigh)) - boid.position
 
                 # Apply weighted forces
-                force = sep * self.w_sep + ali * self.w_ali + coh * self.w_coh
+                force = sep * self.separation + ali * self.alignment + coh * self.cohesion
                 boid.apply_force(force.limit(boid.max_force))
 
         # Update all boids

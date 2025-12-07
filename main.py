@@ -3,35 +3,35 @@ from core.simulation import Simulation
 from ui.render import draw_scene, update_sliders, sliders
 
 def main():
-    width, height = 900, 600
-    pygame.init()
-    win = pygame.display.set_mode((width, height))
-    pygame.display.set_caption("Boids Simulation")
+    width, height = 900, 600  # Defining the size (both variables at the same time) 
+    pygame.init()  # Set up pygame modules 
+    win = pygame.display.set_mode((width, height))  #  Opens the display window 
+    pygame.display.set_caption("Boids Simulation")  #  Title of the window
 
-    sim = Simulation(50, width, height)
-    clock = pygame.time.Clock()
+    simulation = Simulation(1, width, height)  # Callback to the simulation construtor
+    clock = pygame.time.Clock()  # Clock object for tracking the time in pygame
 
     running = True
-    while running:
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
+    while running:  
+        for event in pygame.event.get():  # Retrieves a list with all the events from the event queue (without parameters returns a list with all events since the last call) 
+            if event.type == pygame.QUIT:  # In the loop we can handle each event individually. pygame.QUIT referes to attempt to close: e.g., close the 'X' in the window
                 running = False
 
-        mouse_pressed = pygame.mouse.get_pressed()
-        mouse_pos = pygame.mouse.get_pos()
+        mouse_pressed = pygame.mouse.get_pressed()  # Retrieves the current state of the mouse buttons (0-0-0 left-middle-right states)
+        mouse_pos = pygame.mouse.get_pos()  # Returns the current coordinates of the mouse
 
         # Update sliders based on mouse dragging
         update_sliders(mouse_pos, mouse_pressed)
 
         # Apply slider values to simulation
-        sim.w_sep = sliders["sep"][5]
-        sim.w_ali = sliders["ali"][5]
-        sim.w_coh = sliders["coh"][5]
+        simulation.separation = sliders["sep"][5]
+        simulation.alignment = sliders["ali"][5]
+        simulation.cohesion = sliders["coh"][5]
 
-        sim.step()
-        draw_scene(win, sim.boids)
+        simulation.step()  # Advance simulation logic
+        draw_scene(win, simulation.boids)
 
-        clock.tick(60)
+        clock.tick(60)  # Makes the loop to run at 60 FPS
 
     pygame.quit()
 
