@@ -3,8 +3,9 @@ from core.boid import Boid
 
 import random
 
+
 class Simulation:
-    def __init__(self, n_boids, width, height):  # public Simulation(int nBoids, int width, int height)
+    def __init__(self, n_boids, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
         self.width = width  # SELF -> THIS
         self.height = height
 
@@ -16,6 +17,7 @@ class Simulation:
         self.alignment = 1.0
         self.cohesion = 0.5
 
+
     def find_neighbors(self, target_boid):
         """
         Return a list of all boids that are within the perception
@@ -24,10 +26,11 @@ class Simulation:
         neighbors = []
         for other_boid in self.boids:
             if other_boid is not target_boid:
-                d = (other_boid.position - target_boid.position).length()
-                if d < target_boid.perception:
+                distance = (other_boid.position - target_boid.position).length()  # Find the vector between two positions and convert it into scalar distance
+                if distance < target_boid.perception:  # If it is within the perception radius
                     neighbors.append(other_boid)
         return neighbors
+
 
     def step(self):
         for boid in self.boids:
@@ -59,6 +62,6 @@ class Simulation:
                 boid.apply_force(force.limit(boid.max_force))
 
         # Update all boids
-        for boid in self.boids:
+        for boid in self.boids:  # Updates and apply screen-wrapping to each boid
             boid.update()
             boid.edges(self.width, self.height)
