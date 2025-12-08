@@ -10,9 +10,9 @@ class Boid:
         self.velocity = Vec2(math.cos(angle), math.sin(angle))  # Unit vector pointing in the random direction
         self.acceleration = Vec2()  # Zero vector by default
 
-        self.max_speed = 3
+        self.max_speed = 5
         self.max_force = 0.2
-        self.perception_radius = 200  # radius that affect the boid behaviour
+        self.perception_radius = 80  # radius that affect the boid behaviour
 
     def update(self):
         """
@@ -25,14 +25,10 @@ class Boid:
         self.velocity = (self.velocity + self.acceleration).limit(self.max_speed)  # Increases the velocity but keeping under the maximum speed
         self.position = self.position + self.velocity
         self.acceleration = Vec2()  # Reset acceleration after updating position
-
-
-    def apply_force(self, force):
-        self.acceleration = self.acceleration + force  # F = m*a (m=1) -> F = a
-
+        
 
     def accelerate(self, force):
-        self.acceleration = force
+        self.acceleration = force  # F = m*a (m=1) -> F = a
 
 
     def edges(self, width, height):

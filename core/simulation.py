@@ -6,6 +6,14 @@ import random
 
 class Simulation:
     def __init__(self, n_boids, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
+        """
+        Initialize a new Simulation instance.
+
+        Args:
+            n_boids (int): The number of boids to create.
+            width (int): The width of the simulation canvas.
+            height (int): The height of the simulation canvas.
+        """
         self.width = width  # SELF -> THIS
         self.height = height
 
@@ -13,9 +21,9 @@ class Simulation:
         for i in range(n_boids):  # for (int i = 0; i < nBoids; i++) 
             self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))  # this.boids[i] = new Boid(random.nextInt(width), random.nextInt(height));
 
-        self.separation = 1.5
-        self.alignment = 1.0
-        self.cohesion = 0.5
+        self.separation_weight = 1.5
+        self.alignment_weight = 1.0
+        self.cohesion_weight = 0.5
 
 
     def find_neighbors(self, target_boid):
@@ -90,37 +98,120 @@ class Simulation:
 
         return steering
      
+
+    def separate(self, boid): 
+        """
+        Compute the separation steering force.
+
+        Separation makes the boid steer away from its neighbors to avoid collision.
+        The force is inversely proportional to the distance.
+        """
+        neighbors = self.find_neighbors(boid)
+
+        if not neighbors:
+            return Vec2()  # (x=0, y=0)
+            
+        desired = Vec2()
+        for other in neighbors:
+            diff = (boid.position - other.position)
+            distance = (other.position - boid.position).length()
+            diff = diff * (1/distance)  # It is inversely proportional
+            desired = desired + diff
+        desired = desired / len(neighbors) # Average
+
+        # Desired position
+        desired = desired.set_magnitude(boid.max_speed)  # The strength is limited to avoid the situation where all boids collapse into one single point and stop moving
+
+        # Steering force: desired minus current velocity
+        steering = desired - boid.velocity
+        
+        # Limit the steering force
+        steering = steering.limit(boid.max_force)
+
+        return steering
+    
     
     def step(self):
+        """
+        1) INITIAL TEST WITHOUT REYNOLDS RULES
         for boid in self.boids:
             boid.edges(self.width, self.height)
-            alignment = self.align(boid)
-            boid.accelerate(alignment)
-            # cohesion = self.unite(boid)
-            # boid.accelerate(cohesion)
             boid.update()
-
+        """
         
         """
-            sep = Vec2()
-            for other in neighbors:
-                diff = boid.position - other.position
-                sep = sep + (diff / (diff.length()**2 + 0.01))
-            sep = sep.normalized()
+        2) INDEPENDENT TESTING (ALIGNMENT & COHESION)
+        for boid in self.boids:
+            boid.edges(self.width, self.height)
+            
+            # ALIGNMENT
+            # alignment = self.align(boid)
+            # boid.accelerate(alignment)
+            
+            # COHESION
+            # cohesion = self.unite(boid)
+            # boid.accelerate(cohesion)
 
-            # Cohesion
-            coh = Vec2()
-            for other in neighbors:
-                coh = coh + other.position
-            coh = (coh / len(neighbors)) - boid.position
-        """
-        """
-        # Apply weighted forces
-        force = sep * self.separation + alignment * self.alignment + coh * self.cohesion
-        boid.apply_force(force.limit(boid.max_force))
+            # SEPARATION
+            separation = self.separate(boid)
+            boid.accelerate(separation)
+            
+            boid.update()
         """
 
-        # Update all boids
-        # 
-        # for boid in self.boids:  # Updates and apply screen-wrapping to each boid
+        """
+        3) SIMULATING TOGETHER (ALL THE RULES WITH THE SAME WEIGHT)
+        for boid in self.boids:
+            boid.edges(self.width, self.height)
+            
+            alignment = self.align(boid)
+            cohesion = self.unite(boid)
+            separation = self.separate(boid)
 
+            # Force accumulation
+            force = alignment + cohesion + separation
+            limited_force = force.limit(boid.max_force)
+            boid.accelerate(limited_force)
+
+            boid.update()
+        """
+        
+        """
+        4) SIMULATING TOGETHER (ALL THE RULES WITH THE SAME WEIGHT)
+        for boid in self.boids:
+            boid.edges(self.width, self.height)
+            
+            alignment = self.align(boid)
+            cohesion = self.unite(boid)
+            separation = self.separate(boid)
+        
+            force = (separation * self.separation) + (alignment * self.alignment) + (cohesion * self.cohesion) # Apply weighted forces
+            limited_force = force.limit(boid.max_force)
+            boid.accelerate(limited_force)
+
+            boid.update()
+        """
+        
+        """
+        5) SOLVING SEQUENTIAL DEPENDENCY
+        """
+        all_forces = []
+        # Phase 1: Calculate all steering forces based on the current state of the flock
+        for boid in self.boids:
+            alignment = self.align(boid)
+            cohesion = self.unite(boid)
+            separation = self.separate(boid)
+            
+            # Apply weights to each force
+            force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight)
+                
+            # Limit the final force and store it
+            limited_force = force.limit(boid.max_force)
+            all_forces.append(limited_force)
+
+        # Phase 2: Apply the calculated forces to update all boids simultaneously
+        for i, boid in enumerate(self.boids):
+            boid.edges(self.width, self.height)
+            boid.accelerate(all_forces[i])
+            boid.update()
+        

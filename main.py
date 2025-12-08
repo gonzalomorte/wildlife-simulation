@@ -2,7 +2,7 @@ import pygame
 from core.simulation import Simulation
 from ui.render import draw_scene, update_sliders, sliders
 
-N_BOIDS = 50
+N_BOIDS = 100
 
 def main():
     width, height = 900, 600  # Defining the size (both variables at the same time) 
