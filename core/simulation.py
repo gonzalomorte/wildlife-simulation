@@ -24,6 +24,8 @@ class Simulation:
         self.separation_weight = 1.5
         self.alignment_weight = 1.0
         self.cohesion_weight = 0.5
+        self.max_force = 0.2
+        self.perception_radius = 80
 
 
     def find_neighbors(self, target_boid):
@@ -133,6 +135,11 @@ class Simulation:
     
     def step(self):
         """
+        This method updates the entire flock in two phases to avoid
+        sequential dependency between boids:
+        """
+        
+        """
         1) INITIAL TEST WITHOUT REYNOLDS RULES
         for boid in self.boids:
             boid.edges(self.width, self.height)
@@ -198,6 +205,9 @@ class Simulation:
         all_forces = []
         # Phase 1: Calculate all steering forces based on the current state of the flock
         for boid in self.boids:
+            boid.max_force = self.max_force
+            boid.perception_radius = self.perception_radius
+
             alignment = self.align(boid)
             cohesion = self.unite(boid)
             separation = self.separate(boid)
