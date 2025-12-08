@@ -27,41 +27,93 @@ class Simulation:
         for other_boid in self.boids:
             if other_boid is not target_boid:
                 distance = (other_boid.position - target_boid.position).length()  # Find the vector between two positions and convert it into scalar distance
-                if distance < target_boid.perception:  # If it is within the perception radius
+                if distance < target_boid.perception_radius:  # If it is within the perception radius
                     neighbors.append(other_boid)
         return neighbors
+    
 
+    def align(self, boid): 
+        """
+        Compute the alignment steering force.
 
+        Alignment makes the boid steer toward the average 
+        velocity direction of its neighbors.
+        """
+        neighbors = self.find_neighbors(boid)
+
+        if not neighbors:
+            return Vec2()  # (x=0, y=0)
+            
+        avg_velocity = Vec2()
+        for other in neighbors:
+            avg_velocity = avg_velocity + other.velocity  # Sum up all the velocities    
+        avg_velocity = avg_velocity / len(neighbors)  # Average velocity
+        steering = avg_velocity - boid.velocity  # Reynolds formula: steering = average - current. Apply the force towards the desired direction
+
+        return steering
+    
+
+    def unite(self, boid): 
+        """
+        Compute the cohesion steering force.
+
+        Cohesion makes the boid steer toward the average 
+        position (center of mass) of its neighbors.
+        """
+        neighbors = self.find_neighbors(boid)
+
+        if not neighbors:
+            return Vec2()  # (x=0, y=0)
+            
+        # Get the centroid
+        center = Vec2()
+        for other in neighbors:
+            center = center + other.position
+        center = center / len(neighbors)  # Average position
+
+        # Desired position
+        desired = center - boid.position  # Reynolds formula: desired = average - current. Direction points toward the center of the group
+        desired = desired.set_magnitude(boid.max_speed)  # The strength is limited to avoid the situation where all boids collapse into one single point and stop moving
+
+        # Steering force: desired minus current velocity
+        steering = desired - boid.velocity
+        
+        # Limit the steering force
+        steering = steering.limit(boid.max_force)
+
+        return steering
+     
+    
     def step(self):
         for boid in self.boids:
-            neigh = self.find_neighbors(boid)
+            boid.edges(self.width, self.height)
+            alignment = self.align(boid)
+            boid.accelerate(alignment)
+            # cohesion = self.unite(boid)
+            # boid.accelerate(cohesion)
+            boid.update()
 
-            if len(neigh) > 0:
+        
+        """
+            sep = Vec2()
+            for other in neighbors:
+                diff = boid.position - other.position
+                sep = sep + (diff / (diff.length()**2 + 0.01))
+            sep = sep.normalized()
 
-                # Separation
-                sep = Vec2()
-                for other in neigh:
-                    diff = boid.position - other.position
-                    sep = sep + (diff / (diff.length()**2 + 0.01))
-                sep = sep.normalized()
-
-                # Alignment
-                ali = Vec2()
-                for other in neigh:
-                    ali = ali + other.velocity
-                ali = (ali / len(neigh)) - boid.velocity
-
-                # Cohesion
-                coh = Vec2()
-                for other in neigh:
-                    coh = coh + other.position
-                coh = (coh / len(neigh)) - boid.position
-
-                # Apply weighted forces
-                force = sep * self.separation + ali * self.alignment + coh * self.cohesion
-                boid.apply_force(force.limit(boid.max_force))
+            # Cohesion
+            coh = Vec2()
+            for other in neighbors:
+                coh = coh + other.position
+            coh = (coh / len(neighbors)) - boid.position
+        """
+        """
+        # Apply weighted forces
+        force = sep * self.separation + alignment * self.alignment + coh * self.cohesion
+        boid.apply_force(force.limit(boid.max_force))
+        """
 
         # Update all boids
-        for boid in self.boids:  # Updates and apply screen-wrapping to each boid
-            boid.update()
-            boid.edges(self.width, self.height)
+        # 
+        # for boid in self.boids:  # Updates and apply screen-wrapping to each boid
+

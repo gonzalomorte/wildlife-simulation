@@ -2,13 +2,15 @@ import pygame
 from core.simulation import Simulation
 from ui.render import draw_scene, update_sliders, sliders
 
+N_BOIDS = 50
+
 def main():
     width, height = 900, 600  # Defining the size (both variables at the same time) 
     pygame.init()  # Set up pygame modules 
     win = pygame.display.set_mode((width, height))  #  Opens the display window 
     pygame.display.set_caption("Boids Simulation")  #  Title of the window
 
-    simulation = Simulation(1, width, height)  # Callback to the simulation construtor
+    simulation = Simulation(N_BOIDS, width, height)  # Callback to the simulation construtor
     clock = pygame.time.Clock()  # Clock object for tracking the time in pygame
 
     running = True

@@ -28,3 +28,14 @@ class Vec2:
         if self.length() > max_length:
             return self.normalized() * max_length
         return self
+
+    def set_magnitude(self, new_mag):
+        """
+        Return a new vector with the same direction but the given magnitude.
+        """
+        current_mag = self.length()
+        
+        if current_mag == 0:
+            return Vec2()  # avoid division by zero
+        
+        return self * (new_mag / current_mag)

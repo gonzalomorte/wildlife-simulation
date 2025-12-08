@@ -67,7 +67,9 @@ def draw_sliders(win):
 
 def draw_boids(win, boids):
     for b in boids:
-        pygame.draw.circle(win, (200, 200, 255), (int(b.position.x), int(b.position.y)), 3)  # Surface, RGB, coordinates for the center of the circle, radious
+        pygame.draw.circle(win, (200, 200, 255), (int(b.position.x), int(b.position.y)), 3)  # Surface, RGB, coordinates for the center of the circle, radius
+        arrow_head = b.position + b.velocity.normalized() * 15
+        pygame.draw.line(win, (255, 255, 255), (int(b.position.x), int(b.position.y)), (int(arrow_head.x), int(arrow_head.y)), 1)
 
 
 def draw_scene(win, boids):
