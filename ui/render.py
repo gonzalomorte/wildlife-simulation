@@ -70,8 +70,8 @@ def draw_boids(win, boids):
         pygame.draw.circle(win, (200, 200, 255), (int(b.position.x), int(b.position.y)), 3)  # Surface, RGB, coordinates for the center of the circle, radius
         arrow_head = b.position + b.velocity.normalized() * 15
         pygame.draw.line(win, (255, 255, 255), (int(b.position.x), int(b.position.y)), (int(arrow_head.x), int(arrow_head.y)), 1)
-
-
+        
+        
 def draw_scene(win, boids):
     """Draw everything: background, boids, sliders."""
     win.fill((20, 20, 20))  # RGB fill for the background

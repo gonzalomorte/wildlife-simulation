@@ -10,9 +10,9 @@ class Boid:
         self.velocity = Vec2(math.cos(angle), math.sin(angle))  # Unit vector pointing in the random direction
         self.acceleration = Vec2()  # Zero vector by default
 
-        self.max_speed = 10
+        self.max_speed = 3
         self.max_force = 0.2
-        self.perception_radius = 80  # radius that affect the boid behaviour
+        self.perception_radius = 200  # radius that affect the boid behaviour
 
     def update(self):
         """

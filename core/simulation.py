@@ -44,11 +44,18 @@ class Simulation:
         if not neighbors:
             return Vec2()  # (x=0, y=0)
             
+        # Get the centroid
         avg_velocity = Vec2()
         for other in neighbors:
-            avg_velocity = avg_velocity + other.velocity  # Sum up all the velocities    
+            avg_velocity = avg_velocity + other.velocity
         avg_velocity = avg_velocity / len(neighbors)  # Average velocity
-        steering = avg_velocity - boid.velocity  # Reynolds formula: steering = average - current. Apply the force towards the desired direction
+        
+        # Desired velocity: same direction, but at max speed
+        desired = avg_velocity.set_magnitude(boid.max_speed)
+        
+        # Limit the steering force
+        steering = desired - boid.velocity
+        steering = steering.limit(boid.max_force)
 
         return steering
     
