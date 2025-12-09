@@ -11,7 +11,7 @@ class Boid:
         parameters such as max speed, max force, and perception radius.
         """
         self.position = Vec2(x, y)  # Position 
-        angle = random.uniform(0, 6.28)  # Angle between 0 and 2π (initial direction)
+        angle = random.uniform(0, 2*math.pi)  # Angle between 0 and 2π (initial direction)
         self.velocity = Vec2(math.cos(angle), math.sin(angle))  # Unit vector pointing in the random direction
         self.acceleration = Vec2()  # Zero vector by default
 

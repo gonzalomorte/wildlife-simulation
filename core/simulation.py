@@ -1,10 +1,11 @@
 from core.vector import Vec2
 from core.boid import Boid
 from core.predator import Predator
+from core.obstacle import Obstacle
 
 import random
 
-KILL_RADIUS = 15
+KILL_RADIUS = 10
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
@@ -19,19 +20,27 @@ class Simulation:
         self.width = width  # SELF -> THIS
         self.height = height
 
-        self.predators = []
-        for i in range(n_predators):
-            self.predators.append(Predator(random.randint(0, width), random.randint(0, height)))
-
+        # BOIDS
         self.boids = []  # List containing all Boid objects in the simulation
-        for j in range(n_boids):  # for (int i = 0; i < nBoids; i++) 
-            self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))  # this.boids[i] = new Boid(random.nextInt(width), random.nextInt(height));
+        for _ in range(n_boids):
+            self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))
 
         self.separation_weight = 1.5
         self.alignment_weight = 1.5
         self.cohesion_weight = 1.5
         self.max_force = 0.2
         self.perception_radius = 80
+        
+        # PREDATORS
+        self.predators = []
+        for _ in range(n_predators):
+            self.predators.append(Predator(random.randint(0, width), random.randint(0, height)))
+
+        # OBSTACLES
+        self.obstacles = [
+            Obstacle(300, 200, 40),
+            Obstacle(600, 400, 60)
+        ]
 
 
     def find_neighbors(self, target_boid):
@@ -233,10 +242,10 @@ class Simulation:
 
         # Phase 3: Predators -> compute + update
         for predator in self.predators:
+            predator.edges(self.width, self.height)
             direction = predator.hunt(self.boids)
             predator.accelerate(direction)
             predator.update()
-            predator.edges(self.width, self.height)
 
         # Phase 4: Remove eaten boids
         for predator in self.predators:

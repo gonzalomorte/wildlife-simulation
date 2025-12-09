@@ -14,7 +14,6 @@ sliders = {  # DICTIONARY of slider configurations
     "rad": [10, 170, 200, 0.0, 500, 80],
 }
 
-
 SLIDER_HITBOX_HEIGHT = 12
 SLIDER_CURSOR_WIDTH = 10
 SLIDER_CURSOR_HEIGHT = 16
@@ -71,6 +70,7 @@ def draw_sliders(win):
 def draw_boids(win, boids, checkbox_perception_radius, checkbox_arrow):
     "Support function to draw boids, perception radius and direction arrow"
     for b in boids:
+        # Draw boids
         pygame.draw.circle(win, (200, 200, 255), (int(b.position.x), int(b.position.y)), 3)  # Surface, RGB, coordinates for the center of the circle, radius
         
         # Draw arrow direction only if enabled
