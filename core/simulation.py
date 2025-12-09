@@ -34,6 +34,9 @@ class Simulation:
         for boid in self.boids:
             neigh = self.neighbors(boid)
 
+            # Initialize total force
+            total_force = Vec2()
+
             if len(neigh) > 0:
 
                 # Separation
@@ -55,14 +58,16 @@ class Simulation:
                     coh = coh + other.position
                 coh = (coh / len(neigh)) - boid.position
 
-                # Apply weighted forces
-                force = sep * self.w_sep + ali * self.w_ali + coh * self.w_coh
-                boid.apply_force(force.limit(boid.max_force))
+                # Add weighted boid forces
+                total_force = sep * self.w_sep + ali * self.w_ali + coh * self.w_coh
             
-            # Obstacle avoidance (always applied)
+            # Obstacle avoidance (always apply if obstacles exist)
             if len(self.obstacles) > 0:
                 obs = boid.avoid_obstacles(self.obstacles)
-                boid.apply_force(obs * self.w_obs)
+                total_force = total_force + obs * self.w_obs
+            
+            # Apply combined force with limiting
+            boid.apply_force(total_force.limit(boid.max_force))
 
         # Update all boids
         for boid in self.boids:

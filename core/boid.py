@@ -35,10 +35,27 @@ class Boid:
             if distance < obstacle.radius + obstacle_perception:
                 # Calculate direction away from obstacle
                 diff = self.position - obstacle.position
-                if diff.length() > 0:
-                    # Stronger force when closer
-                    strength = 1.0 / max(distance - obstacle.radius, 1)
+                diff_len = diff.length()
+                
+                if diff_len > 0.001:  # Not exactly at center
+                    # Calculate distance from edge (negative if inside)
+                    edge_distance = distance - obstacle.radius
+                    
+                    # Apply stronger force when closer, with special handling for inside obstacle
+                    if edge_distance < 0:
+                        # Inside obstacle - apply maximum force
+                        strength = 5.0
+                    else:
+                        # Outside obstacle - inverse relationship with capped max
+                        strength = min(1.0 / max(edge_distance, 0.1), 5.0)
+                    
                     avoidance = avoidance + diff.normalized() * strength
+                else:
+                    # Exactly at obstacle center - push in a random direction
+                    import random
+                    angle = random.uniform(0, 6.28)
+                    import math
+                    avoidance = avoidance + Vec2(math.cos(angle), math.sin(angle)) * 5.0
         
         if avoidance.length() > 0:
             return avoidance.normalized()
