@@ -24,6 +24,26 @@ class Boid:
         # you can extend this later
         self.acceleration = self.acceleration + force
 
+    def avoid_obstacles(self, obstacles):
+        """Calculate avoidance force to steer away from obstacles."""
+        avoidance = Vec2()
+        obstacle_perception = 75
+        
+        for obstacle in obstacles:
+            distance = (self.position - obstacle.position).length()
+            
+            if distance < obstacle.radius + obstacle_perception:
+                # Calculate direction away from obstacle
+                diff = self.position - obstacle.position
+                if diff.length() > 0:
+                    # Stronger force when closer
+                    strength = 1.0 / max(distance - obstacle.radius, 1)
+                    avoidance = avoidance + diff.normalized() * strength
+        
+        if avoidance.length() > 0:
+            return avoidance.normalized()
+        return avoidance
+    
     def edges(self, width, height):
         # "infinite window"
         if self.position.x > width:  self.position.x = 0

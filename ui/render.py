@@ -60,9 +60,19 @@ def draw_boids(win, boids):
         pygame.draw.circle(win, (200, 200, 255), (int(b.position.x), int(b.position.y)), 3)
 
 
-def draw_scene(win, boids):
+def draw_obstacles(win, obstacles):
+    """Draw obstacles as red circles."""
+    for obs in obstacles:
+        pygame.draw.circle(win, (200, 50, 50), (int(obs.position.x), int(obs.position.y)), int(obs.radius), 2)
+
+
+def draw_scene(win, boids, obstacles=None):
     win.fill((20, 20, 20))
 
+    # Draw obstacles first (background)
+    if obstacles:
+        draw_obstacles(win, obstacles)
+    
     draw_boids(win, boids)
     draw_sliders(win)
 

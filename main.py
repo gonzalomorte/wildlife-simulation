@@ -23,6 +23,10 @@ def main():
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
+            # Add obstacle on right click
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 3:
+                mx, my = event.pos
+                sim.add_obstacle(mx, my)
 
         mouse_pressed = pygame.mouse.get_pressed()
         mouse_pos = pygame.mouse.get_pos()
@@ -36,7 +40,7 @@ def main():
         sim.w_coh = sliders["coh"][5]
 
         sim.step()
-        draw_scene(win, sim.boids)
+        draw_scene(win, sim.boids, sim.obstacles)
 
         clock.tick(60)
 
