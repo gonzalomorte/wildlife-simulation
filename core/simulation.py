@@ -1,11 +1,13 @@
 from core.vector import Vec2
 from core.boid import Boid
+from core.predator import Predator
 
 import random
 
+KILL_RADIUS = 15
 
 class Simulation:
-    def __init__(self, n_boids, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
+    def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
         """
         Initialize a new Simulation instance.
 
@@ -17,8 +19,12 @@ class Simulation:
         self.width = width  # SELF -> THIS
         self.height = height
 
+        self.predators = []
+        for i in range(n_predators):
+            self.predators.append(Predator(random.randint(0, width), random.randint(0, height)))
+
         self.boids = []  # List containing all Boid objects in the simulation
-        for i in range(n_boids):  # for (int i = 0; i < nBoids; i++) 
+        for j in range(n_boids):  # for (int i = 0; i < nBoids; i++) 
             self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))  # this.boids[i] = new Boid(random.nextInt(width), random.nextInt(height));
 
         self.separation_weight = 1.5
@@ -224,4 +230,22 @@ class Simulation:
             boid.edges(self.width, self.height)
             boid.accelerate(all_forces[i])
             boid.update()
-        
+
+        # Phase 3: Predators -> compute + update
+        for predator in self.predators:
+            direction = predator.hunt(self.boids)
+            predator.accelerate(direction)
+            predator.update()
+            predator.edges(self.width, self.height)
+
+        # Phase 4: Remove eaten boids
+        for predator in self.predators:
+            remaining_boids = []
+            for boid in self.boids:
+                distance = (predator.position - boid.position).length()
+                if distance > KILL_RADIUS:
+                    remaining_boids.append(boid)
+                # else the boid is "eaten" → not added back
+
+            self.boids = remaining_boids
+                

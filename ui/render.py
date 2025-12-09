@@ -83,12 +83,19 @@ def draw_boids(win, boids, checkbox_perception_radius, checkbox_arrow):
             pygame.draw.circle(win, (80, 80, 80 ), (int(b.position.x), int(b.position.y)), b.perception_radius, 1)
         
 
+def draw_predators(win, predators):
+    # Draw predators
+    for predator in predators:
+        pygame.draw.circle(win, (255, 0, 0),(int(predator.position.x),int(predator.position.y)), 8)
 
-def draw_scene(win, boids, checkbox_perception_radius, checkbox_arrow):
+
+
+def draw_scene(win, boids, predators, checkbox_perception_radius, checkbox_arrow):
     """Draw everything: background, boids, sliders."""
     win.fill((20, 20, 20))  # RGB fill for the background
 
     draw_boids(win, boids, checkbox_perception_radius, checkbox_arrow)
+    draw_predators(win, predators)
     draw_sliders(win)
     checkbox_perception_radius.draw(win)
     checkbox_arrow.draw(win)

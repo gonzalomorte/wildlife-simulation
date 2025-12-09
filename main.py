@@ -1,9 +1,10 @@
 import pygame
 from core.simulation import Simulation
-from checkbox import Checkbox
+from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders
 
 N_BOIDS = 50
+N_PREDATORS = 1
 
 def main():
     width, height = 1200, 800  # Defining the size (both variables at the same time) 
@@ -15,7 +16,7 @@ def main():
     checkbox_arrows = Checkbox(25, 210, "Arrows", checked=False)
     checkbox_perception = Checkbox(120, 210, "Radius", checked=False)
 
-    simulation = Simulation(N_BOIDS, width, height)  # Callback to the simulation construtor
+    simulation = Simulation(N_BOIDS, N_PREDATORS, width, height)  # Callback to the simulation construtor
     clock = pygame.time.Clock()  # Clock object for tracking the time in pygame
 
 
@@ -42,7 +43,7 @@ def main():
         simulation.perception_radius = sliders["rad"][5]
 
         simulation.step()  # Advance simulation logic
-        draw_scene(win, simulation.boids, checkbox_perception, checkbox_arrows)
+        draw_scene(win, simulation.boids, simulation.predators, checkbox_perception, checkbox_arrows)
 
         clock.tick(60)  # Makes the loop to run at 60 FPS
 
