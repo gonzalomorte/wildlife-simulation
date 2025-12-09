@@ -28,8 +28,8 @@ class Simulation:
             self.boids.append(Boid(random.randint(0, width), random.randint(0, height)))  # this.boids[i] = new Boid(random.nextInt(width), random.nextInt(height));
 
         self.separation_weight = 1.5
-        self.alignment_weight = 1.0
-        self.cohesion_weight = 0.5
+        self.alignment_weight = 1.5
+        self.cohesion_weight = 1.5
         self.max_force = 0.2
         self.perception_radius = 80
 

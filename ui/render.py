@@ -8,8 +8,8 @@ import pygame
 # current value (set one by default)  
 sliders = {  # DICTIONARY of slider configurations
     "sep": [10, 10, 200, 0.0, 3.0, 1.5],
-    "ali": [10, 50, 200, 0.0, 3.0, 1.0],
-    "coh": [10, 90, 200, 0.0, 3.0, 0.5],
+    "ali": [10, 50, 200, 0.0, 3.0, 1.5],
+    "coh": [10, 90, 200, 0.0, 3.0, 1.5],
     "mxf": [10, 130, 200, 0.0, 10, 0.2],
     "rad": [10, 170, 200, 0.0, 500, 80],
 }

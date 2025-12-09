@@ -3,8 +3,8 @@ from core.simulation import Simulation
 from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders
 
-N_BOIDS = 50
-N_PREDATORS = 1
+N_BOIDS = 100
+N_PREDATORS = 0
 
 def main():
     width, height = 1200, 800  # Defining the size (both variables at the same time) 
@@ -36,9 +36,9 @@ def main():
         update_sliders(mouse_pos, mouse_pressed)
 
         # Apply slider values to simulation
-        simulation.separation = sliders["sep"][5]
-        simulation.alignment = sliders["ali"][5]
-        simulation.cohesion = sliders["coh"][5]
+        simulation.separation_weight = sliders["sep"][5]
+        simulation.alignment_weight = sliders["ali"][5]
+        simulation.cohesion_weight = sliders["coh"][5]
         simulation.max_force = sliders["mxf"][5]
         simulation.perception_radius = sliders["rad"][5]
 

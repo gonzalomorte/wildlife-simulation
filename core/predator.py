@@ -6,9 +6,9 @@ class Predator(Boid):
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.max_speed = 6.0
+        self.max_speed = 4.0
         self.max_force = 0.3
-        self.perception_radius = 150
+        self.perception_radius = 50
 
     def hunt(self, prey_list):
         """Return a steering force toward the nearest prey."""
@@ -16,7 +16,7 @@ class Predator(Boid):
             return Vec2()
 
         # Find nearest prey
-        nearest = min(prey_list, key=lambda p: (p.position - self.position).length())
+        nearest = min(prey_list, key=lambda p: (p.position - self.position).length())  # Selects the prey for which the distance is smallest
         desired = (nearest.position - self.position).set_magnitude(self.max_speed)
         steering = (desired - self.velocity).limit(self.max_force)
         return steering
