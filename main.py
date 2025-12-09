@@ -2,13 +2,20 @@ import pygame
 from core.simulation import Simulation
 from ui.render import draw_scene, update_sliders, sliders
 
+"""
+TO-DO:
+    - More realistic movement to boids (fuzzy)
+"""
+
 def main():
     width, height = 900, 600
+    boids_num = 50
+    
     pygame.init()
     win = pygame.display.set_mode((width, height))
     pygame.display.set_caption("Boids Simulation")
 
-    sim = Simulation(50, width, height)
+    sim = Simulation(boids_num, width, height)
     clock = pygame.time.Clock()
 
     running = True

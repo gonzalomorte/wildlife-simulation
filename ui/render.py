@@ -35,7 +35,6 @@ def update_sliders(mouse_pos, mouse_pressed):
 
 
 def draw_sliders(win):
-    """Draw horizontal sliders and their labels."""
     font = pygame.font.SysFont(None, 24)
 
     for name, (x, y, w, mn, mxv, val) in sliders.items():
@@ -62,7 +61,6 @@ def draw_boids(win, boids):
 
 
 def draw_scene(win, boids):
-    """Draw everything: background, boids, sliders."""
     win.fill((20, 20, 20))
 
     draw_boids(win, boids)
