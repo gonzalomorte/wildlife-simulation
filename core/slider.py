@@ -16,8 +16,6 @@ class Slider:
 
 
     def update(self, mouse_pos, mouse_pressed):
-        
-
         # 2. If dragging this slider
         if self.active and left_click:
             relative = (mouseX - self.x) / self.width
