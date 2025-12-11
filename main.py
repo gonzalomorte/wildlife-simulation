@@ -4,7 +4,7 @@ from core.simulation import Simulation
 from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders, update_checkboxes
 
-N_BOIDS = 10
+N_BOIDS = 50
 N_PREDATORS = 0
 
 def main():
@@ -21,7 +21,6 @@ def main():
         for event in pygame.event.get():  # Retrieves a list with all the events from the event queue (without parameters returns a list with all events since the last call) 
             if event.type == pygame.QUIT:  # In the loop we can handle each event individually. pygame.QUIT referes to attempt to close: e.g., close the 'X' in the window
                 running = False
-    
             update_checkboxes(event)
 
         mouse_pressed = pygame.mouse.get_pressed()  # Retrieves the current state of the mouse buttons (0-0-0 left-middle-right states)
