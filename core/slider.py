@@ -15,15 +15,11 @@ class Slider:
         self.active = False   # Replaces active_slider
 
 
-    def update(self, mouse_pos, mouse_pressed):
-        # 2. If dragging this slider
-        if self.active and left_click:
-            relative = (mouseX - self.x) / self.width
-            relative = max(0, min(1, relative))   # clamp 0..1
-            self.value = self.min_value + relative * (self.max_value - self.min_value)
-
-        # 3. Release
-        if not left_click:
-            self.active = False
+    def update(self, mouseX):
+        """Update this slider's value if it's being dragged."""
+        relative_pos = (mouseX - self.x) / self.width  # Normalizes the mouse position from the starting point (how far is from the left edge)
+        relative_pos = max(0, min(1, relative_pos))  # relative_pos = a value between 0 and 1 (if relative_pos<0 -> 0; if relative_pos>1 -> 1; if 0<=relative_pos<=1 -> relative_pos). Then cannot be lower than 0 or higher than 1
+        self.current_value = self.min_value + relative_pos * (self.max_value - self.min_value)
+    
 
             

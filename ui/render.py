@@ -2,6 +2,12 @@ import pygame
 from core.checkbox import Checkbox
 from core.slider import Slider
 
+# CONSTANTS
+BOID_SIZE = 3
+PREDATOR_SIZE = 8
+OBSTACLE_SIZE = 30
+active_slider = None  
+
 sliders = {
     "sep": Slider(10, 10, 200, 0.0, 3.0, 1.5),
     "ali": Slider(10, 50, 200, 0.0, 3.0, 1.5),
@@ -16,11 +22,6 @@ checkboxes = {
     "rad": Checkbox(120, 210, "Radius", checked=False)
 }
 
-# CONSTANTS
-BOID_SIZE = 3
-PREDATOR_SIZE = 8
-OBSTACLE_SIZE = 30
-active_slider = None  
 
 
 def update_sliders(mouse_pos, mouse_pressed):
@@ -29,20 +30,17 @@ def update_sliders(mouse_pos, mouse_pressed):
 
     mouseX, mouseY = mouse_pos  # Assign the values to independent local variables
 
-    # If user clicks, check if they clicked on a slider
+    # Check if they clicked on a slider
     if mouse_pressed[0] and active_slider is None:  # mouse_pressed[0] is the left button (when we click over something)
         for name, slider in sliders.items():  # Sliders.items() returns pairs (key, value). Dictionary key: name & Value is a tuple of 6 elements
-            if ((slider.x <= mouseX <= slider.width) and (slider.y <= mouseY <= slider.y + Slider.HITBOX_HEIGHT)) :  # Detects which slider is being used
+            if ((slider.x <= mouseX <= slider.x + slider.width) and (slider.y <= mouseY <= slider.y + Slider.HITBOX_HEIGHT)) :  # Detects which slider is being used
                 active_slider = name  # Save the slider being dragged
 
     # If dragging a slider
     if active_slider and mouse_pressed[0]:  # If active_slider has a proper value and the left click of the mouse is pressed
-        slider.x, slider.y, slider.width, slider.min_value, slider.max_value, slider.current_value = sliders[active_slider]   
-
-        relative_pos = (mouseX - slider.x) / slider.width  # Normalizes the mouse position from the starting point (how far is from the left edge)
-        relative_pos = max(0, min(1, relative_pos))  # relative_pos = a value between 0 and 1 (if relative_pos<0 -> 0; if relative_pos>1 -> 1; if 0<=relative_pos<=1 -> relative_pos). Then cannot be lower than 0 or higher than 1
-        sliders["active_slider"].current_value = slider.min_value + relative_pos * (slider.max_value - slider.min_value)  # Store the computed new  value of the slider active
-
+        slider = sliders[active_slider]   
+        slider.update(mouseX)
+        
     # Stop dragging when mouse released
     if not mouse_pressed[0]:
         active_slider = None
