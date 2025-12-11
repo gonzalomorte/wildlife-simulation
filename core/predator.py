@@ -4,7 +4,10 @@ from core.vector import Vec2
 import math
 
 class Predator(Boid):
-    """A predator boid that chases prey and moves faster."""
+    """Constructor: creates a predator at position (x, y) with a random
+        initial velocity, zero acceleration, and specified movement
+        parameters for max speed, max force, and perception radius.
+        It chases prey and moves faster."""
 
     def __init__(self, x, y):
         super().__init__(x, y)

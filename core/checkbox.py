@@ -12,17 +12,6 @@ class Checkbox:
 
         self.font = pygame.font.SysFont(None, 24)
 
-    def draw(self, win):
-        # Draw square
-        pygame.draw.rect(win, (255,255,255), self.rect, 2)
-
-        # Fill if checked
-        if self.checked:
-            pygame.draw.rect(win, (255,255,255), self.rect.inflate(-6, -6))
-
-        # Draw text
-        label = self.font.render(self.text, True, (255,255,255))
-        win.blit(label, (self.x + self.size + 10, self.y))
 
     def handle_event(self, event):
         if event.type == pygame.MOUSEBUTTONDOWN:

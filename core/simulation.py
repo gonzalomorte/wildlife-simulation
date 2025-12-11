@@ -6,6 +6,7 @@ from core.obstacle import Obstacle
 import random
 
 KILL_RADIUS = 10
+OBSTACLE_DETECTION_RADIUS = 30
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
@@ -147,6 +148,26 @@ class Simulation:
 
         return steering
     
+
+    def find_obstacles(self, boid):
+        obstacles = []
+        
+        for obstacle in self.obstacles:
+            distance = (boid.position - obstacle.position).length()            
+            if (distance < OBSTACLE_DETECTION_RADIUS):
+                obstacles.append(obstacle)
+
+        return obstacles
+    
+
+    def avoid_obstacles(self, boid):
+        obstacles = self.find_obstacles(boid)
+        
+        steering = Vec2()
+        if not obstacles:
+            return steering
+        # TODO
+            
     
     def step(self):
         """
@@ -226,6 +247,7 @@ class Simulation:
             alignment = self.align(boid)
             cohesion = self.unite(boid)
             separation = self.separate(boid)
+            avoid_obstacle = self.find_obstacles(boid)
             
             # Apply weights to each force
             force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight)

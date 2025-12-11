@@ -7,8 +7,8 @@ class Boid:
     def __init__(self, x, y):  # Constructor -> public Boid(int x, int y)
         """
         Constructor: creates a boid at position (x, y) with a random
-        initial velocity, zero acceleration, and default movement
-        parameters such as max speed, max force, and perception radius.
+        initial velocity, zero acceleration, and specified movement
+        parameters for max speed, max force, and perception radius.
         """
         self.position = Vec2(x, y)  # Position 
         angle = random.uniform(0, 2*math.pi)  # Angle between 0 and 2π (initial direction)
