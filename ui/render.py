@@ -6,6 +6,7 @@ from core.slider import Slider
 BOID_SIZE = 3
 PREDATOR_SIZE = 8
 OBSTACLE_SIZE = 30
+ARROW_LENGTH = 15
 active_slider = None  
 
 sliders = {
@@ -21,7 +22,6 @@ checkboxes = {
     "arr": Checkbox(25, 210, "Arrows", checked=False), 
     "rad": Checkbox(120, 210, "Radius", checked=False)
 }
-
 
 
 def update_sliders(mouse_pos, mouse_pressed):
@@ -96,7 +96,7 @@ def draw_boids(win, boids):
         
         # Draw arrow direction only if enabled
         if checkboxes["arr"].checked:
-            arrow_head = b.position + b.velocity.normalized() * 15
+            arrow_head = b.position + b.velocity.normalized() * ARROW_LENGTH
             pygame.draw.line(win, (255, 255, 255), (int(b.position.x), int(b.position.y)), (int(arrow_head.x), int(arrow_head.y)), 1)
 
         # Draw perception radius only if enabled

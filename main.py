@@ -15,7 +15,6 @@ def main():
     simulation = Simulation(N_BOIDS, N_PREDATORS, width, height)  # Callback to the simulation construtor
     clock = pygame.time.Clock()  # Clock object for tracking the time in pygame
 
-
     running = True
     while running:  
         for event in pygame.event.get():  # Retrieves a list with all the events from the event queue (without parameters returns a list with all events since the last call) 

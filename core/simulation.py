@@ -6,7 +6,9 @@ from core.obstacle import Obstacle
 import random
 
 KILL_RADIUS = 10
-OBSTACLE_DETECTION_RADIUS = 30
+OBSTACLE_DETECTION_RADIUS = 50
+OBSTACLE_AVOIDANCE_WEIGHT = 2
+OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.3
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
@@ -29,6 +31,7 @@ class Simulation:
         self.separation_weight = 1.5
         self.alignment_weight = 1.5
         self.cohesion_weight = 1.5
+        self.obstacle_avoidance_weight = OBSTACLE_AVOIDANCE_WEIGHT
         self.max_force = 0.2
         self.perception_radius = 80
         
@@ -133,6 +136,11 @@ class Simulation:
         for other in neighbors:
             diff = (boid.position - other.position)
             distance = (other.position - boid.position).length()
+            
+            # Prevent from dividing by zero
+            if distance < 0.001:
+                distance = 0.001
+            
             diff = diff * (1/distance)  # It is inversely proportional
             desired = desired + diff
         desired = desired / len(neighbors) # Average
@@ -147,96 +155,58 @@ class Simulation:
         steering = steering.limit(boid.max_force)
 
         return steering
-    
+
 
     def find_obstacles(self, boid):
         obstacles = []
         
         for obstacle in self.obstacles:
-            distance = (boid.position - obstacle.position).length()            
-            if (distance < OBSTACLE_DETECTION_RADIUS):
+            distance_center = (boid.position - obstacle.position).length()            
+
+            # distance_edge = distance_center - obstacle_radius
+            distance_edge = distance_center - obstacle.radius
+            
+            if (distance_edge < OBSTACLE_DETECTION_RADIUS):
                 obstacles.append(obstacle)
 
         return obstacles
-    
+
 
     def avoid_obstacles(self, boid):
         obstacles = self.find_obstacles(boid)
-        
-        steering = Vec2()
+
         if not obstacles:
-            return steering
-        # TODO
+            return Vec2()
+        
+        desired = Vec2()
+        for obstacle in obstacles:
+            diff = (boid.position - (obstacle.position + Vec2(obstacle.radius)))
+            distance_center = (obstacle.position - boid.position).length()
+            distance_edge = distance_center - obstacle.radius
+            # Prevent from dividing by zero
+            if distance_edge < 0.001:
+                distance_edge = 0.001
+
+            diff = diff * (1/distance_edge*distance_edge)
+            desired = desired + diff
+        desired = desired / len(obstacles)
+
+        # Adjust the vector's length (same direction but at maximum speed)
+        desired = desired.set_magnitude(boid.max_speed)
+        
+        # Steering force: desired minus current velocity (Reynolds)
+        steering = desired - boid.velocity
+
+        # Limit the steering force
+        steering = steering.limit(boid.max_force)
+
+        return steering
             
     
     def step(self):
         """
         This method updates the entire flock in two phases to avoid
         sequential dependency between boids:
-        """
-        
-        """
-        1) INITIAL TEST WITHOUT REYNOLDS RULES
-        for boid in self.boids:
-            boid.edges(self.width, self.height)
-            boid.update()
-        """
-        
-        """
-        2) INDEPENDENT TESTING (ALIGNMENT & COHESION)
-        for boid in self.boids:
-            boid.edges(self.width, self.height)
-            
-            # ALIGNMENT
-            # alignment = self.align(boid)
-            # boid.accelerate(alignment)
-            
-            # COHESION
-            # cohesion = self.unite(boid)
-            # boid.accelerate(cohesion)
-
-            # SEPARATION
-            separation = self.separate(boid)
-            boid.accelerate(separation)
-            
-            boid.update()
-        """
-
-        """
-        3) SIMULATING TOGETHER (ALL THE RULES WITH THE SAME WEIGHT)
-        for boid in self.boids:
-            boid.edges(self.width, self.height)
-            
-            alignment = self.align(boid)
-            cohesion = self.unite(boid)
-            separation = self.separate(boid)
-
-            # Force accumulation
-            force = alignment + cohesion + separation
-            limited_force = force.limit(boid.max_force)
-            boid.accelerate(limited_force)
-
-            boid.update()
-        """
-        
-        """
-        4) SIMULATING TOGETHER (ALL THE RULES WITH THE SAME WEIGHT)
-        for boid in self.boids:
-            boid.edges(self.width, self.height)
-            
-            alignment = self.align(boid)
-            cohesion = self.unite(boid)
-            separation = self.separate(boid)
-        
-            force = (separation * self.separation) + (alignment * self.alignment) + (cohesion * self.cohesion) # Apply weighted forces
-            limited_force = force.limit(boid.max_force)
-            boid.accelerate(limited_force)
-
-            boid.update()
-        """
-        
-        """
-        5) SOLVING SEQUENTIAL DEPENDENCY
         """
         all_forces = []
         # Phase 1: Calculate all steering forces based on the current state of the flock
@@ -247,11 +217,16 @@ class Simulation:
             alignment = self.align(boid)
             cohesion = self.unite(boid)
             separation = self.separate(boid)
-            avoid_obstacle = self.find_obstacles(boid)
+            obstacle_avoidance = self.avoid_obstacles(boid)
+
             
-            # Apply weights to each force
-            force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight)
-                
+            if obstacle_avoidance.length() > OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD * boid.max_force:
+                # If it is in about to crash, gives priority
+                force = obstacle_avoidance
+            else:
+                # Apply weights to each force
+                force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight) + (obstacle_avoidance * self.obstacle_avoidance_weight)
+                    
             # Limit the final force and store it
             limited_force = force.limit(boid.max_force)
             all_forces.append(limited_force)
