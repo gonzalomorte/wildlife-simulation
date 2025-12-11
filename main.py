@@ -31,11 +31,11 @@ def main():
         update_sliders(mouse_pos, mouse_pressed)
 
         # Apply slider values to simulation
-        simulation.separation_weight = sliders["sep"].value
-        simulation.alignment_weight = sliders["ali"].value
-        simulation.cohesion_weight = sliders["coh"].value
-        simulation.max_force = sliders["mxf"].value
-        simulation.perception_radius = sliders["rad"].value
+        simulation.separation_weight = sliders["sep"].current_value
+        simulation.alignment_weight = sliders["ali"].current_value
+        simulation.cohesion_weight = sliders["coh"].current_value
+        simulation.max_force = sliders["mxf"].current_value
+        simulation.perception_radius = sliders["rad"].current_value
 
         simulation.step()  # Advance simulation logic
         draw_scene(win, simulation.boids, simulation.predators, simulation.obstacles)

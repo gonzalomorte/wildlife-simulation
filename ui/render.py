@@ -30,6 +30,20 @@ active_slider = None
 
 
 def update_sliders(mouse_pos, mouse_pressed):
+    """Update slider values when user drags them with the mouse."""
+    global active_slider
+    
+    mouseX, mouseY = mouse_pos
+
+    left_click = mouse_pressed[0]
+    # 1. If user clicks and slider is not active → check if slider is clicked
+    if left_click and not self.active:
+        inside_x = self.x <= mouseX <= self.x + self.width
+        inside_y = self.y <= mouseY <= self.y + Slider.HITBOX_HEIGHT
+
+        if inside_x and inside_y:
+            self.active = True
+
     for slider in sliders.values():
         slider.update(mouse_pos, mouse_pressed)
 
@@ -51,7 +65,7 @@ def draw_sliders(win):
 
         # Handle position
         relative_pos = (slider.current_value - slider.min_value) / (slider.max_value - slider.min_value)  # Normalize the value between 0 and 1
-        slider_cursor = x + relative_pos * slider.width  # Computes the position of the slider cursor 
+        slider_cursor = slider.x + relative_pos * slider.width  # Computes the position of the slider cursor 
 
         # Handle
         pygame.draw.rect(win, (255, 255, 255), (slider_cursor - Slider.SLIDER_CURSOR_WIDTH/2, y - 2, Slider.SLIDER_CURSOR_WIDTH, Slider.SLIDER_CURSOR_HEIGHT))  # Draw the slider cursor in the window 'w' with RGB(255,255,255) and the position and size fixed
