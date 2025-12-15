@@ -108,7 +108,15 @@ def draw_predators(win, predators):
     """Support function to draw predators"""
     for predator in predators:
         pygame.draw.circle(win, (255, 0, 0),(int(predator.position.x),int(predator.position.y)), PREDATOR_SIZE)
+    
+    # Draw arrow direction only if enabled
+        if checkboxes["arr"].checked:
+            arrow_head = predator.position + predator.velocity.normalized() * ARROW_LENGTH
+            pygame.draw.line(win, (255, 255, 255), (int(predator.position.x), int(predator.position.y)), (int(arrow_head.x), int(arrow_head.y)), 1)
 
+        # Draw perception radius only if enabled
+        if checkboxes["rad"].checked:
+            pygame.draw.circle(win, (80, 80, 80 ), (int(predator.position.x), int(predator.position.y)), predator.perception_radius, 1)
 
 def draw_obstacles(win, obstacles):
     """Support function to draw obstacles"""

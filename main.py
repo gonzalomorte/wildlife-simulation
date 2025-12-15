@@ -4,7 +4,7 @@ from core.simulation import Simulation
 from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders, update_checkboxes
 
-N_BOIDS = 10
+N_BOIDS = 50
 N_PREDATORS = 0
 
 def main():

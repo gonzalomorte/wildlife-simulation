@@ -16,7 +16,7 @@ class Boid:
         self.acceleration = Vec2()  # Zero vector by default
 
         self.max_speed = 5
-        self.max_force = 0.2
+        self.max_force = 0.3
         self.perception_radius = 80  # radius that affect the boid behaviour
         
         # FOOD SYSTEM

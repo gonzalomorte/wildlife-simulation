@@ -3,7 +3,7 @@ import random
 
 # CONSTANTS
 REFUGE_CAPACITY = 10
-REFUGE_MOVE_INTERVAL = 20  # seconds
+REFUGE_MOVE_INTERVAL = 100  # seconds
 REFUGE_RADIUS = 30
 
 class Refuge:

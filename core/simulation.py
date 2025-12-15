@@ -8,7 +8,7 @@ from core.refuge import Refuge, REFUGE_RADIUS
 import random
 
 KILL_RADIUS = 10
-OBSTACLE_DETECTION_RADIUS = render.OBSTACLE_SIZE + 10
+OBSTACLE_DETECTION_RADIUS = render.OBSTACLE_SIZE + 15
 OBSTACLE_AVOIDANCE_WEIGHT = 2
 OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.1
 REFUGE_FOOD_THRESHOLD = 15  # Threshold for leaving refuges
@@ -48,6 +48,12 @@ class Simulation:
             Obstacle(300, 200, 40),
             Obstacle(600, 400, 60),
             Obstacle(100, 700, 40),
+            Obstacle(450, 150, 50),
+            Obstacle(800, 300, 70),
+            Obstacle(200, 500, 30),
+            Obstacle(700, 650, 45),
+            Obstacle(900, 100, 35),
+            Obstacle(500, 750, 60),
         ]
 
         # REFUGES
@@ -189,20 +195,28 @@ class Simulation:
         
         desired = Vec2()
         for obstacle in obstacles:
-            diff = (boid.position - (obstacle.position + Vec2(obstacle.radius)))
-            distance_center = (obstacle.position - boid.position).length()
+            diff = boid.position - obstacle.position
+            distance_center = diff.length()
             distance_edge = distance_center - obstacle.radius
+            
             # Prevent from dividing by zero
-            if distance_edge < 0.001:
+            if distance_edge <= 0.001:
                 distance_edge = 0.001
 
-            diff = diff * (1/distance_edge*distance_edge)
-            desired = desired + diff
-        desired = desired / len(obstacles)
+            # Normalize the direction vector before scaling
+            if diff.length() > 0: 
+                diff.normalized()
+
+            repulsion_force = diff/distance_edge
+            desired += repulsion_force
+            
+            if len(obstacles) > 0:
+                desired = desired / len(obstacles)  # Average the forces
 
         # Adjust the vector's length (same direction but at maximum speed)
-        desired = desired.set_magnitude(boid.max_speed)
-        
+        if desired.length() > 0:
+            desired = desired.set_magnitude(boid.max_speed)
+
         # Steering force: desired minus current velocity (Reynolds)
         steering = desired - boid.velocity
 
@@ -291,7 +305,7 @@ class Simulation:
         Phase 2: Calculate all steering forces
         Phase 3: Apply forces and update boids
         Phase 4: Predators
-        Phase 5: Cleanup (eaten/starved boids)
+        Phase 5: Remove eaten boids
         """
         # Phase 0: Update food for all boids
         for boid in self.boids:
@@ -340,7 +354,12 @@ class Simulation:
         # Phase 3: Predators -> compute + update
         for predator in self.predators:
             predator.edges(self.width, self.height)
-            direction = predator.hunt(self.boids)
+            nearby_boids = []
+            for b in self.boids:
+                distance = (predator.position - b.position).length()
+                if (distance <= predator.perception_radius):
+                    nearby_boids.append(b)
+            direction = predator.hunt(nearby_boids)
             predator.accelerate(direction)
             predator.update()
 

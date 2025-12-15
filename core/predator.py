@@ -3,6 +3,7 @@ from core.boid import Boid
 from core.vector import Vec2
 import math
 
+
 class Predator(Boid):
     """Constructor: creates a predator at position (x, y) with a random
         initial velocity, zero acceleration, and specified movement
@@ -11,10 +12,13 @@ class Predator(Boid):
 
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.max_speed = 4
+        self.max_speed = 3
         self.max_force = 0.3
-        self.perception_radius = 50
-
+        self.perception_radius = 100
+        # Follow one target behavior
+        self.target = None
+        self.hunt_timer = 0
+        self.hunt_duration = 300
 
     def find_nearest_prey(self, prey_list):
         """
@@ -48,20 +52,38 @@ class Predator(Boid):
 
     def hunt(self, prey_list):
         """
-        Select the nearest prey and return the chase steering force.
+        Select the nearest prey, goes for it a fixed duration, and return the 
+        chase steering force
         If no prey exists, the predator wanders randomly.
+        If the timer runs out or the target is lost, a new prey is selected
         """
 
         if not prey_list:
             # Wander randomly when no prey is present
             angle = random.uniform(0, 2 * math.pi)
+            self.target = None 
             return Vec2(math.cos(angle), math.sin(angle)) * 0.3
 
         # Step 1: pick nearest prey
         target = self.find_nearest_prey(prey_list)
 
+        # Decide if a new target is needed 
+        if self.target not in prey_list or self.hunt_timer <= 0:
+            self.target = self.find_nearest_prey(prey_list)
+            if self.target: 
+                self.hunt_timer = self.hunt_duration # Reset the hunt timer
+
+
         # Step 2: chase it
         chase_force = self.chase(target)
+
+        if self.target: 
+            chase_force = self.chase(self.target)
+            self.hunt_timer -= 1
+            return chase_force
+        else:
+            angle = random.uniform(0,2*math.pi)
+            return Vec2(math.cos(angle), math.sin(angle)) * 0.3
 
         return chase_force
 
