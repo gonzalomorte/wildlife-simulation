@@ -5,7 +5,7 @@ from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders, update_checkboxes
 
 N_BOIDS = 10
-N_PREDATORS = 0
+N_PREDATORS = 1
 
 def main():
     width, height = 1200, 800  # Defining the size (both variables at the same time) 

@@ -347,9 +347,9 @@ class Simulation:
             remaining_boids = []
             for boid in self.boids:
                 distance = (predator.position - boid.position).length()
-                if distance > KILL_RADIUS:
+                if distance > KILL_RADIUS or boid.in_refuge:
                     remaining_boids.append(boid)
-                # else the boid is "eaten" → not added back
+                # else the boid is "eaten" -> not added back (only if outside refuge)
 
             self.boids = remaining_boids
 
