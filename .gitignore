@@ -4,6 +4,9 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Copilot files
+nano.*.save
+
 # Virtual environments
 venv/
 env/

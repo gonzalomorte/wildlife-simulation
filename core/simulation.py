@@ -2,6 +2,7 @@ from core.vector import Vec2
 from core.boid import Boid
 from core.predator import Predator
 from core.obstacle import Obstacle
+from core.refuge import Refuge, REFUGE_RADIUS
 
 import random
 
@@ -9,6 +10,7 @@ KILL_RADIUS = 10
 OBSTACLE_DETECTION_RADIUS = 50
 OBSTACLE_AVOIDANCE_WEIGHT = 2
 OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.3
+REFUGE_FOOD_THRESHOLD = 15  # Threshold for leaving refuges
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
@@ -44,6 +46,11 @@ class Simulation:
         self.obstacles = [
             Obstacle(300, 200, 40),
             Obstacle(600, 400, 60)
+        ]
+
+        # REFUGES
+        self.refuges = [
+            Refuge(random.randint(REFUGE_RADIUS, width - REFUGE_RADIUS), random.randint(REFUGE_RADIUS, height - REFUGE_RADIUS))
         ]
 
 
@@ -203,14 +210,103 @@ class Simulation:
         return steering
             
     
+    def seek_refuge(self, boid):
+        """
+        Compute the refuge seeking force.
+        
+        If boid food > 15 , it seeks nearby refuges.
+        If refuge is visible and has space, steer toward it.
+        """
+        if boid.food <= REFUGE_FOOD_THRESHOLD or boid.in_refuge:
+            return Vec2()  # Don't seek refuge if hungry or already inside
+        
+        # Find nearby refuges
+        for refuge in self.refuges:
+            distance = (boid.position - refuge.position).length()
+            
+            if distance < boid.perception_radius and not refuge.is_full():
+                # Desired velocity: steer toward refuge at max speed
+                desired = (refuge.position - boid.position).set_magnitude(boid.max_speed)
+                
+                # Steering force
+                steering = desired - boid.velocity
+                steering = steering.limit(boid.max_force)
+                
+                return steering
+        
+        return Vec2()
+
+    def check_refuge_entry(self):
+        """
+        Check if boids should enter refuges or leave them based on food level.
+        """
+        # Handle boids entering refuges
+        for boid in self.boids:
+            if not boid.in_refuge and boid.food > REFUGE_FOOD_THRESHOLD:
+                # Check if boid is at any refuge location
+                for refuge in self.refuges:
+                    distance = (boid.position - refuge.position).length()
+                    if distance < refuge.radius:
+                        # Try to add boid to refuge
+                        if refuge.add_boid(boid):
+                            break  # Boid entered, move to next boid
+
+        # Handle boids leaving refuges (because food is now <= threshold)
+        for refuge in self.refuges:
+            boids_to_remove = []
+            for boid in refuge.boids_inside:
+                if boid.food <= REFUGE_FOOD_THRESHOLD:
+                    boids_to_remove.append(boid)
+            
+            for boid in boids_to_remove:
+                refuge.remove_boid(boid)
+
+    def update_refuges(self):
+        """
+        Update all refuges (movement timers, etc).
+        """
+        for refuge in self.refuges:
+            refuge.update(self.width, self.height)
+
+    def check_starving_boids(self):
+        """
+        Remove boids that have starved (food <= 0).
+        """
+        remaining_boids = []
+        for boid in self.boids:
+            if boid.food > 0:
+                remaining_boids.append(boid)
+            # else the boid starved → not added back
+        
+        self.boids = remaining_boids
+
     def step(self):
         """
-        This method updates the entire flock in two phases to avoid
-        sequential dependency between boids:
+        This method updates the entire flock in multiple phases to avoid
+        sequential dependency between boids.
+        
+        Phase 1: Food update and refuge management
+        Phase 2: Calculate all steering forces
+        Phase 3: Apply forces and update boids
+        Phase 4: Predators
+        Phase 5: Cleanup (eaten/starved boids)
         """
+        # Phase 0: Update food for all boids
+        for boid in self.boids:
+            boid.update_food()
+        
+        # Phase 0.5: Update refuges and handle boid entry/exit
+        self.update_refuges()
+        self.check_refuge_entry()
+        
         all_forces = []
         # Phase 1: Calculate all steering forces based on the current state of the flock
+        # Only for boids NOT in refuges
         for boid in self.boids:
+            if boid.in_refuge:
+                all_forces.append(Vec2())  # No movement for boids in refuges
+                continue
+                
             boid.max_force = self.max_force
             boid.perception_radius = self.perception_radius
 
@@ -218,14 +314,15 @@ class Simulation:
             cohesion = self.unite(boid)
             separation = self.separate(boid)
             obstacle_avoidance = self.avoid_obstacles(boid)
+            refuge_seeking = self.seek_refuge(boid)
 
             
             if obstacle_avoidance.length() > OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD * boid.max_force:
-                # If it is in about to crash, gives priority
+                # If it is about to crash, gives priority
                 force = obstacle_avoidance
             else:
                 # Apply weights to each force
-                force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight) + (obstacle_avoidance * self.obstacle_avoidance_weight)
+                force = (separation * self.separation_weight) + (alignment * self.alignment_weight) + (cohesion * self.cohesion_weight) + (obstacle_avoidance * self.obstacle_avoidance_weight) + refuge_seeking
                     
             # Limit the final force and store it
             limited_force = force.limit(boid.max_force)
@@ -233,9 +330,10 @@ class Simulation:
 
         # Phase 2: Apply the calculated forces to update all boids simultaneously
         for i, boid in enumerate(self.boids):
-            boid.edges(self.width, self.height)
-            boid.accelerate(all_forces[i])
-            boid.update()
+            if not boid.in_refuge:
+                boid.edges(self.width, self.height)
+                boid.accelerate(all_forces[i])
+                boid.update()
 
         # Phase 3: Predators -> compute + update
         for predator in self.predators:
@@ -254,4 +352,7 @@ class Simulation:
                 # else the boid is "eaten" → not added back
 
             self.boids = remaining_boids
+
+        # Phase 5: Remove starved boids
+        self.check_starving_boids()
                 

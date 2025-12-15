@@ -18,6 +18,11 @@ class Boid:
         self.max_speed = 5
         self.max_force = 0.2
         self.perception_radius = 80  # radius that affect the boid behaviour
+        
+        # FOOD SYSTEM
+        self.food = random.uniform(0, 100)  # Food level (0-100, where 100 is full)
+        self.time_since_food_decrease = 0  # Counter to decrease food every second
+        self.in_refuge = False  # Track if boid is inside a refuge
 
 
     def update(self):
@@ -39,6 +44,15 @@ class Boid:
         """
         self.acceleration = force  # F = m*a (m=1) -> F = a
 
+    def update_food(self):
+        """
+        Update food level. Decrease by 1 every second (60 frames at 60 FPS).
+        """
+        self.time_since_food_decrease += 1/60.0
+        
+        if self.time_since_food_decrease >= 1.0:
+            self.food = max(0, self.food - 1)  # Decrease by 1 per second, minimum 0
+            self.time_since_food_decrease = 0
 
     def edges(self, width, height):
         """

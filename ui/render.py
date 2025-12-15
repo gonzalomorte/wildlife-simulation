@@ -116,12 +116,32 @@ def draw_obstacles(win, obstacles):
         pygame.draw.circle(win, (125, 30, 17),(int(obstacle.position.x), int(obstacle.position.y)), OBSTACLE_SIZE)
 
 
-def draw_scene(win, boids, predators, obstacles):
-    """Draw everything: background, boids, predaators, obstacles, sliders, checkboxes..."""
+def draw_refuges(win, refuges):
+    """Support function to draw refuges with capacity display"""
+    font = pygame.font.SysFont(None, 20)
+    
+    for refuge in refuges:
+        # Draw refuge circle (blue)
+        pygame.draw.circle(win, (0, 100, 255), (int(refuge.position.x), int(refuge.position.y)), refuge.radius)
+        
+        # Draw text: boids inside / capacity
+        boid_count = refuge.get_boid_count()
+        max_capacity = refuge.max_capacity
+        text = f"{boid_count}/{max_capacity}"
+        txt_surface = font.render(text, True, (255, 255, 255))
+        
+        # Center the text on the refuge
+        text_rect = txt_surface.get_rect(center=(int(refuge.position.x), int(refuge.position.y)))
+        win.blit(txt_surface, text_rect)
+
+
+def draw_scene(win, boids, predators, obstacles, refuges):
+    """Draw everything: background, boids, predators, obstacles, refuges, sliders, checkboxes..."""
     win.fill((20, 20, 20))  # RGB fill for the background
 
     draw_predators(win, predators)
     draw_obstacles(win, obstacles)
+    draw_refuges(win, refuges)
     draw_boids(win, boids)
     draw_sliders(win)
     draw_checkboxes(win)

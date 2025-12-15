@@ -4,7 +4,7 @@ from core.simulation import Simulation
 from core.checkbox import Checkbox
 from ui.render import draw_scene, update_sliders, sliders, update_checkboxes
 
-N_BOIDS = 50
+N_BOIDS = 10
 N_PREDATORS = 0
 
 def main():
@@ -36,7 +36,7 @@ def main():
         simulation.perception_radius = sliders["rad"].current_value
 
         simulation.step()  # Advance simulation logic
-        draw_scene(win, simulation.boids, simulation.predators, simulation.obstacles)
+        draw_scene(win, simulation.boids, simulation.predators, simulation.obstacles, simulation.refuges)
 
         clock.tick(60)  # Makes the loop to run at 60 FPS
 
