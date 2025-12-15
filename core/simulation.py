@@ -6,9 +6,9 @@ from core.obstacle import Obstacle
 import random
 
 KILL_RADIUS = 10
-OBSTACLE_DETECTION_RADIUS = 50
-OBSTACLE_AVOIDANCE_WEIGHT = 2
-OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.3
+OBSTACLE_DETECTION_RADIUS = 30
+OBSTACLE_AVOIDANCE_WEIGHT = 1.5
+OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.2
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
