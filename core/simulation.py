@@ -66,10 +66,11 @@ class Simulation:
         """
         Return a list of all boids that are within the perception
         radius of the given boid (target_boid).
+        Excludes boids inside refuges (they're invisible).
         """
         neighbors = []
         for other_boid in self.boids:
-            if other_boid is not target_boid:
+            if other_boid is not target_boid and not other_boid.in_refuge:
                 distance = (other_boid.position - target_boid.position).length()  # Find the vector between two positions and convert it into scalar distance
                 if distance < target_boid.perception_radius:  # If it is within the perception radius
                     neighbors.append(other_boid)
@@ -368,9 +369,9 @@ class Simulation:
             remaining_boids = []
             for boid in self.boids:
                 distance = (predator.position - boid.position).length()
-                if distance > KILL_RADIUS:
+                if distance > KILL_RADIUS or boid.in_refuge:
                     remaining_boids.append(boid)
-                # else the boid is "eaten" → not added back
+                # else the boid is "eaten" -> not added back (only if outside refuge)
 
             self.boids = remaining_boids
 

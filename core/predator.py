@@ -22,12 +22,17 @@ class Predator(Boid):
 
     def find_nearest_prey(self, prey_list):
         """
-        Return the closest prey to the predator based on Euclidean distance.
+        Return the closest prey to the predator.
+        Ignores prey that are inside refuges (protected).
         """
         nearest = None
         min_distance = float("inf")
 
         for prey in prey_list:
+            # Skip boids inside refuges
+            if prey.in_refuge:
+                continue
+                
             distance = (prey.position - self.position).length()
             if distance < min_distance:
                 min_distance = distance
