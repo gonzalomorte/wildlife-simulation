@@ -2,13 +2,14 @@ from core.vector import Vec2
 from core.boid import Boid
 from core.predator import Predator
 from core.obstacle import Obstacle
+import ui.render as render
 
 import random
 
 KILL_RADIUS = 10
-OBSTACLE_DETECTION_RADIUS = 30
-OBSTACLE_AVOIDANCE_WEIGHT = 1.5
-OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.2
+OBSTACLE_DETECTION_RADIUS = render.OBSTACLE_SIZE + 10
+OBSTACLE_AVOIDANCE_WEIGHT = 2
+OBSTACLE_AVOIDANCE_PRIORITY_THRESHOLD = 0.1
 
 class Simulation:
     def __init__(self, n_boids, n_predators, width, height):  # CONSTRUCTOR -> public Simulation(int nBoids, int width, int height)
@@ -43,7 +44,8 @@ class Simulation:
         # OBSTACLES
         self.obstacles = [
             Obstacle(300, 200, 40),
-            Obstacle(600, 400, 60)
+            Obstacle(600, 400, 60),
+            Obstacle(100, 700, 40),
         ]
 
 
