@@ -1,0 +1,166 @@
+{
+  "maps": [
+    {
+      "id": 0,
+      "name": "Open Field",
+      "description": "Minimal obstacles, wide open space",
+      "obstacles": [
+        {"x": 600, "y": 400, "radius": 50}
+      ],
+      "refuges": [
+        {"x": 200, "y": 200},
+        {"x": 1000, "y": 600}
+      ]
+    },
+    {
+      "id": 1,
+      "name": "Forest Clearing",
+      "description": "Multiple medium obstacles scattered around",
+      "obstacles": [
+        {"x": 300, "y": 200, "radius": 40},
+        {"x": 600, "y": 400, "radius": 60},
+        {"x": 900, "y": 250, "radius": 45},
+        {"x": 450, "y": 600, "radius": 35}
+      ],
+      "refuges": [
+
+      ]
+    },
+    {
+      "id": 2,
+      "name": "Canyon",
+      "description": "Two large obstacles creating a narrow passage",
+      "obstacles": [
+        {"x": 400, "y": 300, "radius": 80},
+        {"x": 800, "y": 500, "radius": 80}
+      ],
+      "refuges": [
+        {"x": 150, "y": 150},
+        {"x": 1050, "y": 650},
+        {"x": 600, "y": 400}
+      ]
+    },
+    {
+      "id": 3,
+      "name": "Dense Forest",
+      "description": "Many small obstacles creating a complex environment",
+      "obstacles": [
+        {"x": 250, "y": 200, "radius": 30},
+        {"x": 450, "y": 250, "radius": 35},
+        {"x": 650, "y": 200, "radius": 30},
+        {"x": 850, "y": 250, "radius": 35},
+        {"x": 350, "y": 450, "radius": 30},
+        {"x": 550, "y": 500, "radius": 35},
+        {"x": 750, "y": 450, "radius": 30},
+        {"x": 950, "y": 500, "radius": 35}
+      ],
+      "refuges": [
+        {"x": 100, "y": 100},
+        {"x": 1100, "y": 100},
+        {"x": 600, "y": 400}
+      ]
+    },
+    {
+      "id": 4,
+      "name": "Corner Refuge",
+      "description": "Obstacles in corners with central refuge",
+      "obstacles": [
+        {"x": 150, "y": 150, "radius": 60},
+        {"x": 1050, "y": 150, "radius": 60},
+        {"x": 150, "y": 650, "radius": 60},
+        {"x": 1050, "y": 650, "radius": 60}
+      ],
+      "refuges": [
+        {"x": 600, "y": 400}
+      ]
+    },
+    {
+      "id": 5,
+      "name": "Maze",
+      "description": "Strategic placement creating maze-like paths",
+      "obstacles": [
+        {"x": 300, "y": 400, "radius": 50},
+        {"x": 600, "y": 200, "radius": 50},
+        {"x": 600, "y": 600, "radius": 50},
+        {"x": 900, "y": 400, "radius": 50}
+      ],
+      "refuges": [
+        {"x": 100, "y": 400},
+        {"x": 1100, "y": 400}
+      ]
+    },
+    {
+      "id": 6,
+      "name": "Island",
+      "description": "Large central obstacle with refuges on sides",
+      "obstacles": [
+        {"x": 600, "y": 400, "radius": 100}
+      ],
+      "refuges": [
+        {"x": 200, "y": 400},
+        {"x": 1000, "y": 400}
+      ]
+    },
+    {
+      "id": 7,
+      "name": "Scattered",
+      "description": "Random-sized obstacles spread across the map",
+      "obstacles": [
+        {"x": 200, "y": 300, "radius": 45},
+        {"x": 500, "y": 150, "radius": 55},
+        {"x": 800, "y": 350, "radius": 40},
+        {"x": 350, "y": 550, "radius": 50},
+        {"x": 700, "y": 650, "radius": 45},
+        {"x": 1000, "y": 550, "radius": 35}
+      ],
+      "refuges": [
+        {"x": 100, "y": 100},
+        {"x": 1100, "y": 700},
+        {"x": 600, "y": 400}
+      ]
+    },
+    {
+      "id": 8,
+      "name": "Twin Valleys",
+      "description": "Two separated areas with obstacles between",
+      "obstacles": [
+        {"x": 600, "y": 250, "radius": 70},
+        {"x": 600, "y": 550, "radius": 70}
+      ],
+      "refuges": [
+        {"x": 300, "y": 400},
+        {"x": 900, "y": 400}
+      ]
+    },
+    {
+      "id": 9,
+      "name": "Edge Barriers",
+      "description": "Obstacles along edges forcing center movement",
+      "obstacles": [
+        {"x": 200, "y": 100, "radius": 40},
+        {"x": 600, "y": 100, "radius": 40},
+        {"x": 1000, "y": 100, "radius": 40},
+        {"x": 200, "y": 700, "radius": 40},
+        {"x": 600, "y": 700, "radius": 40},
+        {"x": 1000, "y": 700, "radius": 40}
+      ],
+      "refuges": [
+        {"x": 300, "y": 400},
+        {"x": 900, "y": 400}
+      ]
+    },
+    {
+      "id": 10,
+      "name": "Balanced Quads",
+      "description": "Two obstacles and two refuges spread across quadrants for symmetric testing",
+      "obstacles": [
+        {"x": 400, "y": 300, "radius": 60},
+        {"x": 800, "y": 500, "radius": 60}
+      ],
+      "refuges": [
+        {"x": 250, "y": 550},
+        {"x": 950, "y": 250}
+      ]
+    }
+  ]
+}
