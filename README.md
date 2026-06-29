@@ -10,7 +10,7 @@ This project was developed as a coursework assignment for **Advanced Topics in A
 
 | Name | GitHub |
 |------|--------|
-| Gonzalo Morte Gómez | [@gonzalomorte](https://github.com/gonzalomorte) |
+| Gonzalo Morte Gómez | [@gonzalomorte](https://github.com/gonzalomorte) | 
 | Jose Daniel Moya Moreno | [@josedanielmoya](https://github.com/josedanielmoya) |
 | Álvaro Rivera Moreno | [@AlvaroRiveraMoreno](https://github.com/AlvaroRiveraMoreno) |
 
