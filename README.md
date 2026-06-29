@@ -66,7 +66,7 @@ The result is a dynamic, emergent ecosystem where the three Boids weights, food 
 
 ---
 
-## Features
+## Features 
 
 - Real-time Pygame visualisation with bird-shaped sprites, energy bars, and an animated predator glow.
 - Interactive sliders to adjust separation, alignment, and cohesion weights live during the simulation.
